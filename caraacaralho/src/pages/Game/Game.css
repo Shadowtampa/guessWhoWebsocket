@@ -1,0 +1,45 @@
+/* Estilo do contêiner das cartas */
+.game-board {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-gap: 20px;
+  padding: 20px;
+  justify-items: center;
+}
+
+/* Estilo das cartas individuais */
+.card {
+  width: 150px; /* Ajuste a largura conforme necessário */
+  height: 200px; /* Ajuste a altura conforme necessário */
+  border: 2px solid #333;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  transition: transform 0.3s;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.card:hover {
+  transform: scale(1.05);
+}
+
+.card-image {
+  width: 100%;
+  height: auto;
+  border-bottom: 2px solid #333;
+}
+
+.card-content {
+  padding: 10px;
+}
+
+.card-name {
+  font-size: 1.2em;
+  color: #333;
+  margin: 10px 0 0;
+}
