@@ -9,9 +9,11 @@ import { useGlobalContext } from '../../context/UserContext';
 
 export const Game = () => {
 
+    const [countFlippedFalse, setCountFlippedFalse] = useState(0);
+
     const { copy } = useGlobalContext()
 
-    const WS_URL = `ws://127.0.0.1:8000`
+    const WS_URL = `ws://192.168.137.1:8000`
     const { sendJsonMessage, lastMessage } = useWebSocket(
         WS_URL,
         {
@@ -20,14 +22,35 @@ export const Game = () => {
             onMessage: (event: WebSocketEventMap['message']) => {
                 const data = JSON.parse(event.data);
                 const userId = data.userId;
-    
+
+
+                console.log("Antes de mudar o user" + JSON.parse(event.data))
                 if (userId) {
+                    console.log("durante  de mudar o user" + data)
+
                     localStorage.setItem('userId', userId);
+                }
+                console.log("depois de mudar o user" + data)
+
+
+                const otherUserId = Object.keys(data).find(id => id !== localStorage.getItem('userId'));
+
+                console.log(otherUserId)
+
+                if (otherUserId) {
+                    // Recuperar as informações do usuário que não é o seu
+                    const otherUserInfo = data[otherUserId];
+
+                    if (otherUserInfo.state.flippedCards != null) {
+                        setCountFlippedFalse(otherUserInfo.state.flippedCards);
+                    }
                 }
 
             }
         }
     )
+
+
 
 
     const [flipped, setFlipped] = useState(Array(25).fill(false));
@@ -59,12 +82,9 @@ export const Game = () => {
         };
         setCards(newCards);
 
-        // Contar cards que estão virados (flipped = false)
-        const countFlippedFalse = newCards.filter(card => !card.flipped).length;
-
         // Enviar a contagem via WebSocket
         sendJsonMessage({
-            flippedCards: countFlippedFalse
+            flippedCards: newCards.filter(card => !card.flipped).length
         });
     };
 
@@ -91,7 +111,7 @@ export const Game = () => {
         <>
             <h1>CARA A CARALHO</h1>
 
-            <p>Seu adversário flipou 5 cartas!</p>
+            <p>Seu adversário flipou {countFlippedFalse} cartas!</p>
             <p>{localStorage.getItem('userId')}</p>
 
             <div className="game-board">

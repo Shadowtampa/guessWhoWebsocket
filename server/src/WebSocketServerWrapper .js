@@ -13,7 +13,7 @@ class WebSocketServerWrapper {
         this.port = port;
 
         this.wsServer.on('connection', (connection, request) => this.onConnection(connection, request));
-        this.server.listen(this.port, () => {
+        this.server.listen(this.port, '0.0.0.0' ,() => {
             console.log(`WebSocket server is running on port ${this.port}`);
         });
     }
