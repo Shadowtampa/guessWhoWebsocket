@@ -12,10 +12,23 @@ export const Game = () => {
     const { copy } = useGlobalContext()
 
     const WS_URL = `ws://127.0.0.1:8000`
-    const { sendJsonMessage, lastMessage } = useWebSocket(WS_URL, {
-        share: true,
-        queryParams: { username: copy }
-    })
+    const { sendJsonMessage, lastMessage } = useWebSocket(
+        WS_URL,
+        {
+            share: true,
+            queryParams: { username: copy },
+            onMessage: (event: WebSocketEventMap['message']) => {
+                const data = JSON.parse(event.data);
+                const userId = data.userId;
+    
+                if (userId) {
+                    localStorage.setItem('userId', userId);
+                }
+
+            }
+        }
+    )
+
 
     const [flipped, setFlipped] = useState(Array(25).fill(false));
     const [messageHistory, setMessageHistory] = useState<MessageEvent<any>[]>([]);
@@ -68,8 +81,8 @@ export const Game = () => {
             const lastKey = keys[0];
             const antonioData = data[lastKey];
 
-            if (antonioData ) {
-                console.log('Estado do Antonio:', antonioData.state);
+            if (antonioData) {
+                // console.log('Estado do Antonio:', antonioData.state);
             }
         }
     }, [lastMessage]);
@@ -79,6 +92,7 @@ export const Game = () => {
             <h1>CARA A CARALHO</h1>
 
             <p>Seu adversário flipou 5 cartas!</p>
+            <p>{localStorage.getItem('userId')}</p>
 
             <div className="game-board">
 
