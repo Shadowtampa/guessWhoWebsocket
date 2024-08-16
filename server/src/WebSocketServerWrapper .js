@@ -28,7 +28,13 @@ class WebSocketServerWrapper {
 
         connection.send(JSON.stringify({ message: `Bem-vindo, ${username}!`, userId: uuid }));
 
-        connection.on('message', message => this.connectionManager.handleMessage(uuid, JSON.parse(message.toString())));
+        connection.on('message', message => {
+            try {
+                this.connectionManager.handleMessage(uuid, JSON.parse(message.toString()));
+            } catch (error) {
+                console.error(`Error handling message from ${username}: ${error.message}`);
+            }
+        });        
         connection.on('close', () => this.connectionManager.removeUserConnection(uuid));
     }
 }
